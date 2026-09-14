@@ -190,19 +190,29 @@ function reduceToOneDigit(number){
 /* =========================================================
    ДОПОЛНИТЕЛЬНЫЕ ЧИСЛА
 
-   Пример:
+   Для 24.06.1987:
 
-   24.06.1987
+   1-е = 37
+   2-е = 10
+   3-е = 1
+   4-е = 33
+   5-е = 6
 
-   1 число = 37
-   2 число = 10
-   3 число = 1
-   4 число = 33
-   5 число = 6
-
-   То есть отображаем:
-
+   Итог:
    37 / 10 / 1 / 33 / 6
+
+
+   Для 04.07.1988:
+
+   1-е = 37
+   2-е = 10
+   3-е = 1
+   4-е = 29
+   5-е = 11
+   6-е = 2
+
+   Итог:
+   37 / 10 / 1 / 29 / 11 / 2
 ========================================================= */
 
 function calculateAdditionalNumbers(dateString){
@@ -217,69 +227,100 @@ function calculateAdditionalNumbers(dateString){
         .split('')
         .map(Number);
 
-    /* Первое дополнительное число */
-    const first = digits.reduce((sum, digit) => sum + digit, 0);
+    /*
+       1-е дополнительное число
 
-    /* Второе дополнительное число */
+       Сумма всех цифр даты.
+    */
+    const first = digits.reduce(
+        (sum, digit) => sum + digit,
+        0
+    );
+
+
+    /*
+       2-е дополнительное число
+
+       Сумма цифр первого числа.
+
+       Например:
+       37 → 10
+    */
     const second = sumDigits(first);
 
-    /* Третье дополнительное число */
+
+    /*
+       3-е дополнительное число
+
+       Сведение второго числа до однозначного.
+
+       Например:
+       10 → 1
+    */
+    const third = reduceToOneDigit(second);
+
+
+    /*
+       4-е дополнительное число
+
+       Первое дополнительное число
+       минус удвоенная первая цифра дня.
+
+       24.06.1987:
+       37 - 2×2 = 33
+
+       04.07.1988:
+       37 - 2×4 = 29
+    */
     const firstDayDigit = Number(day.charAt(0));
 
-    const third = first - (2 * firstDayDigit);
+    const fourth =
+        first - (2 * firstDayDigit);
 
-    /* Четвёртое дополнительное число */
-    const fourth = sumDigits(third);
-
-    /*
-       Пятое дополнительное число —
-       сведение четвёртого до однозначного,
-       если оно всё ещё двузначное.
-    */
-
-    const fifth = reduceToOneDigit(fourth);
 
     /*
-       Важный момент:
+       5-е дополнительное число
 
-       Если fourth уже однозначное число,
-       отдельного нового значения не добавляем.
+       Сумма цифр четвёртого.
 
-       Для 24.06.1987:
-       33 -> 6
+       33 → 6
 
-       Для 04.07.1988:
-       29 -> 11 -> 2
+       29 → 11
     */
+    const fifth = sumDigits(fourth);
 
-    const chain = [];
-
-    chain.push(first);
-    chain.push(second);
-
-    if(second >= 10){
-        chain.push(reduceToOneDigit(second));
-    }
-
-    chain.push(third);
-
-    if(third >= 10){
-        chain.push(fourth);
-    } else {
-        chain.push(reduceToOneDigit(third));
-    }
 
     /*
-       Для 33 -> 6:
-       chain = 37 / 10 / 1 / 33 / 6
+       6-е дополнительное число
 
-       Для 29:
-       29 / 11 / 2
+       Нужно только если пятое число
+       осталось двузначным.
+
+       29 → 11 → 2
     */
+    const sixth = reduceToOneDigit(fifth);
 
-    if(fourth >= 10){
-        chain.push(fifth);
+
+    /*
+       Формируем отображаемую цепочку.
+    */
+    const chain = [
+        first,
+        second,
+        third,
+        fourth,
+        fifth
+    ];
+
+
+    /*
+       Если пятое число двузначное,
+       добавляем шестое.
+    */
+    if(fifth >= 10){
+        chain.push(sixth);
     }
+
 
     return {
         first,
@@ -287,6 +328,7 @@ function calculateAdditionalNumbers(dateString){
         third,
         fourth,
         fifth,
+        sixth,
         chain
     };
 }
@@ -298,31 +340,52 @@ function calculateAdditionalNumbers(dateString){
 
 function calculatePsychomatrix(dateString){
 
-    const additional = calculateAdditionalNumbers(dateString);
+    const additional =
+        calculateAdditionalNumbers(dateString);
 
-    const cleanDate = dateString.replace(/-/g,'');
-
-    const digits = cleanDate
-        .split('')
-        .map(Number)
-        .filter(n => n !== 0);
 
     /*
-       В психоматрицу добавляем цифры:
-       - даты рождения
-       - всех дополнительных чисел цепочки
+       Цифры самой даты.
+       Нули не учитываем.
     */
+    const cleanDate =
+        dateString.replace(/-/g,'');
 
+    const digits =
+        cleanDate
+            .split('')
+            .map(Number)
+            .filter(n => n !== 0);
+
+
+    /*
+       В психоматрицу добавляем ВСЕ цифры
+       всех отображаемых дополнительных чисел.
+
+       Например для 24.06.1987:
+
+       37
+       10
+       1
+       33
+       6
+    */
     additional.chain.forEach(number => {
 
         String(number)
             .split('')
             .map(Number)
             .filter(n => n !== 0)
-            .forEach(digit => digits.push(digit));
+            .forEach(digit => {
+                digits.push(digit);
+            });
 
     });
 
+
+    /*
+       Считаем количество каждой цифры.
+    */
     const counts = {
         1:0,
         2:0,
@@ -335,11 +398,15 @@ function calculatePsychomatrix(dateString){
         9:0
     };
 
+
     digits.forEach(digit => {
+
         if(counts[digit] !== undefined){
             counts[digit]++;
         }
+
     });
+
 
     return {
         counts,
@@ -360,7 +427,9 @@ function calculatePsychomatrix(dateString){
 
 function renderMatrix(counts){
 
-    const matrix = document.getElementById('matrix');
+    const matrix =
+        document.getElementById('matrix');
+
 
     const order = [
         1,4,7,
@@ -368,56 +437,93 @@ function renderMatrix(counts){
         3,6,9
     ];
 
+
     matrix.innerHTML = '';
+
 
     order.forEach(number => {
 
-        const cell = document.createElement('div');
+        const cell =
+            document.createElement('div');
 
-        cell.className = 'matrix-cell';
+        cell.className =
+            'matrix-cell';
+
 
         cell.textContent =
             counts[number] > 0
                 ? String(number).repeat(counts[number])
                 : '—';
 
+
         matrix.appendChild(cell);
+
     });
 }
 
 
 /* =========================================================
-   ДОПОЛНИТЕЛЬНЫЕ ЧИСЛА
+   ОТОБРАЖЕНИЕ ДОПОЛНИТЕЛЬНЫХ ЧИСЕЛ
 ========================================================= */
 
 function renderAdditional(additional){
 
-    const extra = document.getElementById('extra');
+    const extra =
+        document.getElementById('extra');
 
-    const chain = additional.chain.join(' / ');
+
+    const chain =
+        additional.chain.join(' / ');
+
 
     extra.innerHTML = `
-        <p><strong>Дополнительные числа:</strong></p>
-        <p>${chain}</p>
 
-        <p><strong>1-е дополнительное число:</strong> ${additional.first}</p>
-        <p><strong>2-е дополнительное число:</strong> ${additional.second}</p>
+        <p>
+            <strong>Дополнительные числа:</strong>
+        </p>
+
+        <p>
+            ${chain}
+        </p>
+
+        <p>
+            <strong>1-е дополнительное число:</strong>
+            ${additional.first}
+        </p>
+
+        <p>
+            <strong>2-е дополнительное число:</strong>
+            ${additional.second}
+        </p>
+
+        <p>
+            <strong>3-е дополнительное число:</strong>
+            ${additional.third}
+        </p>
+
+        <p>
+            <strong>4-е дополнительное число:</strong>
+            ${additional.fourth}
+        </p>
+
+        <p>
+            <strong>5-е дополнительное число:</strong>
+            ${additional.fifth}
+        </p>
+
         ${
-            additional.second >= 10
-            ? `<p><strong>Сведение второго:</strong> ${reduceToOneDigit(additional.second)}</p>`
-            : ''
+            additional.fifth >= 10
+            ?
+            `
+            <p>
+                <strong>6-е дополнительное число:</strong>
+                ${additional.sixth}
+            </p>
+            `
+            :
+            ''
         }
-        <p><strong>3-е дополнительное число:</strong> ${additional.third}</p>
-        ${
-            additional.third >= 10
-            ? `<p><strong>4-е дополнительное число:</strong> ${additional.fourth}</p>`
-            : ''
-        }
-        ${
-            additional.fourth >= 10
-            ? `<p><strong>Сведение:</strong> ${additional.fifth}</p>`
-            : ''
-        }
+
     `;
 }
 
@@ -546,6 +652,7 @@ const ONE = {
     formula:
     `Ваша формула — самостоятельность, характер и интерес к мужчине, который способен брать ответственность на себя.`
 }
+
 };
 
 
@@ -673,6 +780,7 @@ const TWO = {
     formula:
     `Ваша формула — сильная включённость, быстрая реакция и ощущение очень плотного контакта.`
 }
+
 };
 
 
@@ -783,6 +891,7 @@ const THREE = {
     formula:
     `Ваша формула — глубокое внимание, наблюдательность и сильное желание понять мужчину за пределами первого впечатления.`
 }
+
 };
 
 
@@ -792,25 +901,45 @@ const THREE = {
 
 function getProfile(data, count){
 
+    /*
+       Если точного значения нет,
+       берём ближайшее меньшее.
+
+       Например:
+       3 единицы → профиль 111
+       4 единицы → профиль 1111
+       и т.д.
+
+       Для нулевого значения используется профиль 0,
+       если он существует.
+    */
+
     if(data[count]){
         return data[count];
     }
+
 
     const keys = Object.keys(data)
         .map(Number)
         .sort((a,b) => a-b);
 
+
     if(count < keys[0]){
         return data[keys[0]];
     }
 
+
     let nearest = keys[0];
 
+
     keys.forEach(key => {
+
         if(key <= count){
             nearest = key;
         }
+
     });
+
 
     return data[nearest];
 }
@@ -822,15 +951,23 @@ function getProfile(data, count){
 
 function buildFormulaResult(counts){
 
-    const one = getProfile(ONE, counts[1]);
-    const two = getProfile(TWO, counts[2]);
-    const three = getProfile(THREE, counts[3]);
+    const one =
+        getProfile(ONE, counts[1]);
+
+    const two =
+        getProfile(TWO, counts[2]);
+
+    const three =
+        getProfile(THREE, counts[3]);
+
 
     return `
 
         <div class="report-block">
 
-            <h2>1. Какое впечатление вы производите при знакомстве</h2>
+            <h2>
+                1. Какое впечатление вы производите при знакомстве
+            </h2>
 
             <p>${one.impression}</p>
 
@@ -843,7 +980,9 @@ function buildFormulaResult(counts){
 
         <div class="report-block">
 
-            <h2>2. Что именно может его зацепить</h2>
+            <h2>
+                2. Что именно может его зацепить
+            </h2>
 
             <p>${one.hook}</p>
 
@@ -856,7 +995,9 @@ function buildFormulaResult(counts){
 
         <div class="report-block">
 
-            <h2>3. Как вы показываете интерес, когда мужчина вам нравится</h2>
+            <h2>
+                3. Как вы показываете интерес, когда мужчина вам нравится
+            </h2>
 
             <p>${one.interest}</p>
 
@@ -869,7 +1010,9 @@ function buildFormulaResult(counts){
 
         <div class="report-block">
 
-            <h2>4. Какие мужчины могут вас особенно цеплять</h2>
+            <h2>
+                4. Какие мужчины могут вас особенно цеплять
+            </h2>
 
             <p>${one.men}</p>
 
@@ -882,7 +1025,9 @@ function buildFormulaResult(counts){
 
         <div class="report-block">
 
-            <h2>5. Ваша формула притяжения</h2>
+            <h2>
+                5. Ваша формула притяжения
+            </h2>
 
             <p>${one.formula}</p>
 
@@ -895,14 +1040,20 @@ function buildFormulaResult(counts){
 
         <div class="cta">
 
-            <h3>И вот здесь начинается самое интересное</h3>
+            <h3>
+                И вот здесь начинается самое интересное
+            </h3>
 
             <p>
             Ваша формула притяжения показывает только первый слой —
-            <strong>как вы проявляетесь при знакомстве и что запускает интерес мужчины</strong>.
+            <strong>
+            как вы проявляетесь при знакомстве и что запускает интерес мужчины
+            </strong>.
             </p>
 
-            <p>Но это только начало.</p>
+            <p>
+            Но это только начало.
+            </p>
 
             <p>
             Когда мужчина действительно становится важен, включается уже совсем другая часть вашей модели.
@@ -910,37 +1061,52 @@ function buildFormulaResult(counts){
             и почему одни ваши качества работают на отношения, а другие могут создавать сложности.
             </p>
 
-            <p><strong>Этого в короткой формуле нет.</strong></p>
+            <p>
+            <strong>Этого в короткой формуле нет.</strong>
+            </p>
 
             <p>
-            Это уже ваш полный разбор <strong>«Почему тебя не забывают»</strong>.
+            Это уже ваш полный разбор
+            <strong>«Почему тебя не забывают»</strong>.
             </p>
 
             <hr>
 
-            <h3>Если хотите разобраться глубже</h3>
+            <h3>
+                Если хотите разобраться глубже
+            </h3>
 
             <p>
-            <strong>«Почему тебя не забывают»</strong> — если хотите понять
-            <strong>свою модель отношений целиком</strong>: как вы входите в отношения,
-            как проявляете чувства, что происходит с вами, когда мужчина становится важен,
+            <strong>«Почему тебя не забывают»</strong> —
+            если хотите понять
+            <strong>свою модель отношений целиком</strong>:
+            как вы входите в отношения,
+            как проявляете чувства,
+            что происходит с вами, когда мужчина становится важен,
             что вы даёте отношениям и какие ваши особенности могут как притягивать мужчину,
             так и создавать сложности.
             </p>
 
             <p>
-            <strong>«Мужчина без иллюзий»</strong> — если вам важнее разобраться
-            <strong>в конкретном мужчине</strong>: понять его особенности, отношение к близости,
-            как он проявляется в отношениях и какая женщина ему подходит.
+            <strong>«Мужчина без иллюзий»</strong> —
+            если вам важнее разобраться
+            <strong>в конкретном мужчине</strong>:
+            понять его особенности,
+            отношение к близости,
+            как он проявляется в отношениях
+            и какая женщина ему подходит.
             </p>
 
             <p>
-            <strong>«Почему тебя не забывают»</strong> — про вас и вашу модель отношений.
+            <strong>«Почему тебя не забывают»</strong> —
+            про вас и вашу модель отношений.
             <br>
-            <strong>«Мужчина без иллюзий»</strong> — про конкретного мужчину.
+            <strong>«Мужчина без иллюзий»</strong> —
+            про конкретного мужчину.
             </p>
 
         </div>
+
     `;
 }
 
@@ -951,22 +1117,35 @@ function buildFormulaResult(counts){
 
 function calculate(){
 
-    const dateInput = document.getElementById('birthDate');
+    const dateInput =
+        document.getElementById('birthDate');
+
 
     if(!dateInput.value){
+
         alert('Введите дату рождения');
+
         return;
     }
 
-    const result = calculatePsychomatrix(dateInput.value);
+
+    const result =
+        calculatePsychomatrix(dateInput.value);
+
 
     renderMatrix(result.counts);
+
     renderAdditional(result.additional);
+
 
     document.getElementById('formulaResult').innerHTML =
         buildFormulaResult(result.counts);
 
-    document.getElementById('result').classList.remove('hidden');
+
+    document
+        .getElementById('result')
+        .classList
+        .remove('hidden');
 }
 
 
@@ -979,12 +1158,20 @@ function copyResult(){
     const text =
         document.getElementById('formulaResult').innerText;
 
-    navigator.clipboard.writeText(text)
+
+    navigator.clipboard
+        .writeText(text)
+
         .then(() => {
+
             alert('Результат скопирован');
+
         })
+
         .catch(() => {
+
             alert('Не удалось скопировать автоматически');
+
         });
 }
 
