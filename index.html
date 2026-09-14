@@ -193,7 +193,6 @@ button:hover{
 </style>
 </head>
 
-
 <body>
 
 <div class="card">
@@ -221,7 +220,6 @@ button:hover{
 
 </div>
 
-
 <div id="result" class="hidden">
 
     <div class="card">
@@ -233,7 +231,6 @@ button:hover{
         <div id="extra"></div>
 
     </div>
-
 
     <div class="card">
 
@@ -249,7 +246,6 @@ button:hover{
     </div>
 
 </div>
-
 
 <script>
 
@@ -268,6 +264,7 @@ function reduceNumber(number){
     }
 
     return number;
+
 }
 
 
@@ -281,11 +278,6 @@ function calculatePsychomatrix(dateString){
 
     const originalDate = day + month + year;
 
-    const digits = originalDate
-        .split("")
-        .map(Number)
-        .filter(n => n !== 0);
-
 
     /* Первое дополнительное число */
 
@@ -295,7 +287,8 @@ function calculatePsychomatrix(dateString){
         .reduce((sum,n) => sum + n,0);
 
 
-    /* Второе дополнительное число */
+    /* Второе дополнительное число
+       Всегда доводим до однозначного */
 
     const B = reduceNumber(A);
 
@@ -309,6 +302,7 @@ function calculatePsychomatrix(dateString){
         if(Number(digit) !== 0){
 
             firstMeaningfulDigit = Number(digit);
+
             break;
 
         }
@@ -321,18 +315,29 @@ function calculatePsychomatrix(dateString){
     const C = A - (2 * firstMeaningfulDigit);
 
 
-    /* Четвёртое дополнительное число */
+    /* Четвёртое дополнительное число
+       Всегда доводим до однозначного */
 
     const D = reduceNumber(Math.abs(C));
 
 
     /*
-       Считаем цифры психоматрицы.
+       Для психоматрицы используем:
+       дату рождения +
+       1-е дополнительное +
+       2-е дополнительное +
+       3-е дополнительное +
+       4-е дополнительное.
+
        Нули не учитываются.
     */
 
     const allDigits = [
-        ...digits,
+
+        ...originalDate
+            .split("")
+            .map(Number)
+            .filter(n => n !== 0),
 
         ...String(A)
             .split("")
@@ -353,6 +358,7 @@ function calculatePsychomatrix(dateString){
             .split("")
             .map(Number)
             .filter(n => n !== 0)
+
     ];
 
 
@@ -395,13 +401,22 @@ function calculatePsychomatrix(dateString){
 
 /* =========================================================
    ОТОБРАЖЕНИЕ ПСИХОМАТРИЦЫ
+
+   Горизонтально: 1 | 4 | 7
+   Вертикально:   1 | 2 | 3
    ========================================================= */
 
 function renderMatrix(counts){
 
+    const matrixOrder = [
+        1,4,7,
+        2,5,8,
+        3,6,9
+    ];
+
     let html = '<div class="matrix">';
 
-    for(let number = 1; number <= 9; number++){
+    matrixOrder.forEach(number => {
 
         html += `
             <div class="matrix-cell">
@@ -420,7 +435,7 @@ function renderMatrix(counts){
             </div>
         `;
 
-    }
+    });
 
     html += '</div>';
 
@@ -489,7 +504,6 @@ const ONE = {
 
     },
 
-
     11: {
 
         impression:
@@ -508,7 +522,6 @@ const ONE = {
         "Ваша формула притяжения — внимание к человеку, участие и способность замечать то, как он отвечает вам. Вы можете не раскрывать симпатию сразу, но мужчина довольно быстро становится для вас важным, если вы видите от него настоящее внимание."
 
     },
-
 
     111: {
 
@@ -529,7 +542,6 @@ const ONE = {
 
     },
 
-
     1111: {
 
         impression:
@@ -549,7 +561,6 @@ const ONE = {
 
     },
 
-
     11111: {
 
         impression:
@@ -568,7 +579,6 @@ const ONE = {
         "Ваша формула притяжения — индивидуальность, избирательность и ощущение собственной ценности. Вас сильнее цепляет мужчина, который действительно видит, какая вы, а не просто использует набор привычных комплиментов."
 
     },
-
 
     111111: {
 
@@ -617,7 +627,6 @@ const TWO = {
 
     },
 
-
     1: {
 
         impression:
@@ -636,7 +645,6 @@ const TWO = {
         "Ваша формула притяжения — живая реакция и ощущение взаимного включения. Вам важно не просто находиться рядом, а чувствовать, что между вами действительно происходит контакт."
 
     },
-
 
     2: {
 
@@ -657,7 +665,6 @@ const TWO = {
 
     },
 
-
     3: {
 
         impression:
@@ -676,7 +683,6 @@ const TWO = {
         "Ваша формула притяжения — чувствительность к состоянию мужчины, быстрая реакция и ощущение живого эмоционального контакта."
 
     },
-
 
     4: {
 
@@ -697,7 +703,6 @@ const TWO = {
 
     },
 
-
     5: {
 
         impression:
@@ -716,7 +721,6 @@ const TWO = {
         "Ваша формула притяжения — очень высокая чувствительность к контакту, внимание к деталям и ощущение, что между вами происходит гораздо больше, чем просто разговор."
 
     },
-
 
     6: {
 
@@ -765,7 +769,6 @@ const THREE = {
 
     },
 
-
     1: {
 
         impression:
@@ -784,7 +787,6 @@ const THREE = {
         "Ваша формула притяжения — живой интерес к человеку. Вы показываете симпатию через внимание к его словам, жизни и тому, что ему действительно важно."
 
     },
-
 
     2: {
 
@@ -805,7 +807,6 @@ const THREE = {
 
     },
 
-
     3: {
 
         impression:
@@ -825,7 +826,6 @@ const THREE = {
 
     },
 
-
     4: {
 
         impression:
@@ -844,7 +844,6 @@ const THREE = {
         "Ваша формула притяжения — сильное любопытство к мужчине и желание понять его глубже. Вам интересен не готовый образ, а человек, которого постепенно приходится разгадывать."
 
     },
-
 
     5: {
 
@@ -1033,9 +1032,7 @@ const formulaCTA = `
             Это уже ваш полный разбор <strong>«Почему тебя не забывают»</strong>.
         </p>
 
-
         <hr>
-
 
         <h3>Если хотите разобраться глубже</h3>
 
