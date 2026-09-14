@@ -27,50 +27,46 @@ body{
     border-radius:18px;
     padding:28px;
     margin-bottom:20px;
-    box-shadow:0 4px 18px rgba(0,0,0,.05);
+    box-shadow:0 4px 20px rgba(0,0,0,.05);
 }
 
 h1{
     font-size:32px;
-    line-height:1.15;
-    margin:0 0 14px;
+    line-height:1.2;
+    margin:0 0 16px;
 }
 
 h2{
     font-size:22px;
+    margin:0 0 16px;
+}
+
+h3{
+    font-size:18px;
+    margin:24px 0 10px;
+}
+
+p{
     margin:0 0 14px;
 }
 
-.subtitle{
-    font-size:17px;
-    color:#555;
-    margin-bottom:25px;
-}
-
-label{
-    display:block;
-    font-weight:bold;
-    margin-bottom:8px;
-}
-
-input[type="date"]{
+input{
     width:100%;
-    padding:14px;
+    padding:15px;
     border:1px solid #ccc;
     border-radius:10px;
     font-size:16px;
-    margin-bottom:14px;
+    margin:8px 0 14px;
 }
 
 button{
     width:100%;
-    padding:15px;
-    border:0;
+    padding:15px 20px;
+    border:none;
     border-radius:10px;
     background:#222;
     color:white;
     font-size:16px;
-    font-weight:bold;
     cursor:pointer;
 }
 
@@ -78,121 +74,72 @@ button:hover{
     opacity:.9;
 }
 
-.error{
-    color:#b00020;
-    margin-top:10px;
-    display:none;
-}
-
-.result{
-    display:none;
-}
-
 .matrix{
     display:grid;
     grid-template-columns:repeat(3,1fr);
-    gap:8px;
-    max-width:300px;
+    gap:10px;
+    max-width:360px;
     margin:20px auto;
 }
 
 .cell{
+    min-height:75px;
     background:#f7f5f2;
-    border-radius:10px;
-    min-height:70px;
+    border-radius:12px;
     display:flex;
-    flex-direction:column;
     align-items:center;
     justify-content:center;
-}
-
-.cell-number{
-    font-size:14px;
-    color:#777;
-}
-
-.cell-count{
     font-size:25px;
     font-weight:bold;
 }
 
 .extra{
-    margin-top:20px;
+    margin-top:15px;
 }
 
 .extra-row{
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
     padding:10px 0;
     border-bottom:1px solid #eee;
 }
 
-.indicators{
-    display:grid;
-    gap:12px;
-    margin-top:20px;
-}
-
-.indicator{
-    background:#f7f5f2;
-    padding:16px;
-    border-radius:12px;
-}
-
-.indicator-title{
+.extra-number{
     font-weight:bold;
-    margin-bottom:5px;
 }
 
 .report{
     margin-top:20px;
 }
 
-.report-section{
-    margin-bottom:24px;
-}
-
-.report-section h3{
-    font-size:19px;
-    margin-bottom:8px;
-}
-
 .cta{
-    background:#222;
-    color:white;
-    border-radius:16px;
+    margin-top:30px;
     padding:24px;
-    margin-top:25px;
-}
-
-.cta h2{
-    color:white;
-}
-
-.cta p{
-    color:#eee;
+    background:#f7f5f2;
+    border-radius:14px;
 }
 
 .cta a{
     display:block;
-    text-align:center;
-    background:white;
-    color:#222;
     text-decoration:none;
-    padding:14px;
-    border-radius:10px;
-    font-weight:bold;
-    margin-top:14px;
-}
-
-.copy-button{
-    background:#eee;
     color:#222;
-    margin-top:15px;
+    font-weight:bold;
+    margin-top:12px;
 }
 
-.small{
-    font-size:13px;
-    color:#777;
-    margin-top:12px;
+.hidden{
+    display:none;
+}
+
+.copy-btn{
+    margin-top:15px;
+    background:#777;
+}
+
+.error{
+    color:#b00020;
+    margin-top:10px;
 }
 
 </style>
@@ -200,14 +147,15 @@ button:hover{
 
 <body>
 
-
 <div class="card">
 
     <h1>Твоя формула притяжения</h1>
 
-    <div class="subtitle">
-        Что именно в тебе цепляет мужчин и почему интерес к тебе может сохраняться даже после знакомства.
-    </div>
+    <p>
+        Узнай, какое впечатление ты производишь на мужчину,
+        что именно в тебе цепляет его внимание и как ты ведёшь себя,
+        когда человек действительно тебе нравится.
+    </p>
 
     <label for="birthDate">Дата рождения</label>
 
@@ -220,15 +168,12 @@ button:hover{
         ПОЛУЧИТЬ МОЮ ФОРМУЛУ ПРИТЯЖЕНИЯ
     </button>
 
-    <div class="error" id="error">
-        Укажите дату рождения.
-    </div>
+    <div id="error" class="error"></div>
 
 </div>
 
 
-<div class="result" id="result">
-
+<div id="result" class="hidden">
 
     <div class="card">
 
@@ -243,133 +188,46 @@ button:hover{
 
         <h2>Дополнительные числа</h2>
 
-        <div id="extra"></div>
-
-    </div>
-
-
-    <div class="card">
-
-        <h2>Твои показатели</h2>
-
-        <div class="indicators">
-
-            <div class="indicator">
-                <div class="indicator-title">
-                    Характер
-                </div>
-                <div id="character"></div>
-            </div>
-
-            <div class="indicator">
-                <div class="indicator-title">
-                    Энергия и контакт
-                </div>
-                <div id="energy"></div>
-            </div>
-
-            <div class="indicator">
-                <div class="indicator-title">
-                    Интерес
-                </div>
-                <div id="interest"></div>
-            </div>
-
-            <div class="indicator">
-                <div class="indicator-title">
-                    Логика
-                </div>
-                <div id="logic"></div>
-            </div>
-
-            <div class="indicator">
-                <div class="indicator-title">
-                    Семья
-                </div>
-                <div id="family"></div>
-            </div>
-
-        </div>
+        <div class="extra" id="extra"></div>
 
     </div>
 
 
     <div class="card report">
 
-        <h2>Твоя формула притяжения</h2>
+        <h2>Как ты притягиваешь мужчин</h2>
 
-        <div class="report-section">
+        <h3>Первое впечатление</h3>
+        <p id="firstImpression"></p>
 
-            <h3>Какое первое впечатление ты производишь</h3>
+        <h3>Что в тебе цепляет</h3>
+        <p id="attraction"></p>
 
-            <p id="firstImpression"></p>
+        <h3>Как проявляется интерес</h3>
+        <p id="interestReport"></p>
 
-        </div>
+        <h3>Когда тебе нравится мужчина</h3>
+        <p id="whenLike"></p>
 
+        <h3>Когда отношения становятся ближе</h3>
+        <p id="closeness"></p>
 
-        <div class="report-section">
-
-            <h3>Что в тебе цепляет</h3>
-
-            <p id="attraction"></p>
-
-        </div>
-
-
-        <div class="report-section">
-
-            <h3>Почему интерес к тебе сохраняется</h3>
-
-            <p id="interestReport"></p>
-
-        </div>
-
-
-        <div class="report-section">
-
-            <h3>Что происходит, когда тебе нравится мужчина</h3>
-
-            <p id="whenLike"></p>
-
-        </div>
-
-
-        <div class="report-section">
-
-            <h3>Как ты ведёшь себя в близости</h3>
-
-            <p id="closeness"></p>
-
-        </div>
-
-
-        <div class="report-section">
-
-            <h3>Что особенно важно учитывать в отношениях</h3>
-
-            <p id="relationships"></p>
-
-        </div>
+        <h3>В серьёзных отношениях</h3>
+        <p id="relationships"></p>
 
     </div>
 
 
-    <div class="cta">
+    <div class="card cta">
 
         <h2>Хочешь разобраться глубже?</h2>
 
-        <p>
-            Если хочется понять не только свою формулу притяжения,
-            но и почему конкретный мужчина ведёт себя именно так,
-            можно посмотреть следующий разбор.
-        </p>
-
-        <a href="#" onclick="return false;">
-            ПОЧЕМУ ТЕБЯ НЕ ЗАБЫВАЮТ
+        <a href="#">
+            Почему тебя не забывают
         </a>
 
-        <a href="#" onclick="return false;">
-            МУЖЧИНА БЕЗ ИЛЛЮЗИЙ
+        <a href="#">
+            Мужчина без иллюзий
         </a>
 
     </div>
@@ -377,19 +235,11 @@ button:hover{
 
     <div class="card">
 
-        <button
-            class="copy-button"
-            onclick="copyResult()"
-        >
+        <button class="copy-btn" onclick="copyReport()">
             СКОПИРОВАТЬ РАЗБОР
         </button>
 
-        <div class="small">
-            Результат рассчитан автоматически по указанной дате рождения.
-        </div>
-
     </div>
-
 
 </div>
 
@@ -397,10 +247,52 @@ button:hover{
 <script>
 
 
-/* =========================================
-   РАСЧЁТ
-========================================= */
+/* =========================================================
+   РАСШИФРОВКИ — НЕ МЕНЯТЬ
+   ========================================================= */
 
+const ONE = {
+  "1": "Ты можешь производить впечатление спокойной и достаточно мягкой девушки, но при этом у тебя есть своё мнение. Тебе важно чувствовать, что мужчина относится к тебе с уважением и не пытается тобой управлять.",
+  "2": "Ты легко подстраиваешься под человека и можешь долго учитывать его желания. Иногда из-за этого мужчина сначала видит удобство и мягкость, а уже потом замечает твой характер.",
+  "3": "Ты заметная в общении и достаточно быстро показываешь характер. С тобой обычно понятно, есть ли интерес: ты не очень умеешь долго изображать безразличие.",
+  "4": "Ты можешь выглядеть очень самостоятельной и человеком, который привык рассчитывать на себя. Мужчине рядом с тобой важно понимать, что он действительно нужен тебе, а не просто присутствует рядом.",
+  "5": "У тебя сильная потребность самой принимать решения. Ты можешь спокойно обсуждать отношения, но давление и попытки решить за тебя обычно вызывают сопротивление.",
+  "6": "Ты умеешь заботиться о человеке и много делать для отношений. Но если отдачи мало, со временем появляется раздражение и ощущение, что всё держится на тебе.",
+  "7": "Ты не всегда сразу показываешь настоящую реакцию. Мужчина может долго пытаться понять, что ты на самом деле чувствуешь.",
+  "8": "Ты достаточно требовательна к отношению к себе. Если мужчина нарушает договорённости или ведёт себя несправедливо, ты это запоминаешь.",
+  "9": "Ты много замечаешь и быстро считываешь детали поведения человека. Поэтому красивые слова сами по себе редко способны надолго удерживать твой интерес."
+};
+
+
+const TWO = {
+  "1": "В контакте тебе важно чувствовать внимание. Если мужчина проявляется последовательно, ты постепенно становишься теплее.",
+  "2": "Ты чувствительна к атмосфере общения. Тон, настроение и отношение мужчины могут влиять на тебя сильнее, чем его конкретные слова.",
+  "3": "Ты хорошо включаешься в живое общение. Тебе интересен мужчина, с которым есть разговор, реакция и ощущение взаимного интереса.",
+  "4": "Ты можешь сохранять дистанцию, пока не поймёшь, что человеку можно доверять. Поэтому мужчина не всегда сразу понимает твоё отношение.",
+  "5": "Тебе важно, чтобы общение было понятным. Намёки и игры могут заинтересовать на короткое время, но долго поддерживать интерес тебе сложно.",
+  "6": "Ты быстро замечаешь, когда человеку нужна поддержка, и можешь сама начинать вкладываться в контакт.",
+  "7": "Тебе бывает проще наблюдать, чем первой показывать сильную заинтересованность. Поэтому мужчина может недооценить степень твоего интереса.",
+  "8": "Ты хорошо чувствуешь баланс в отношениях. Если мужчина только получает внимание, но мало даёт взамен, интерес постепенно снижается.",
+  "9": "Ты можешь долго помнить отдельные моменты общения. Особенно если мужчина оставил сильное впечатление или задел что-то важное для тебя."
+};
+
+
+const THREE = {
+  "1": "Когда тебе действительно нравится мужчина, ты можешь становиться внимательнее к нему, но при этом не всегда хочешь сразу показывать, насколько он тебе важен.",
+  "2": "Если мужчина тебе нравится, ты начинаешь сильнее реагировать на его внимание и отсутствие внимания. Поэтому неопределённость может быстро затягивать тебя.",
+  "3": "Тебе хочется больше общения, разговоров и совместных впечатлений. Если мужчина отвечает взаимностью, интерес может быстро усиливаться.",
+  "4": "Когда мужчина нравится, тебе всё равно важно сохранить контроль над своей жизнью. Ты не обязательно сразу готова перестраивать всё вокруг отношений.",
+  "5": "Тебе важно понимать, что происходит между вами. Поэтому при сильном интересе ты можешь много анализировать его поведение.",
+  "6": "Когда мужчина нравится, ты можешь начать заботиться о нём ещё до того, как отношения стали по-настоящему близкими.",
+  "7": "Ты можешь долго не показывать мужчине всю силу своего интереса. Иногда это создаёт у него ощущение, что он тебе безразличен.",
+  "8": "Тебе важно видеть конкретные действия. Если мужчина говорит одно, а делает другое, интерес быстро сталкивается с недоверием.",
+  "9": "Ты можешь долго возвращаться мыслями к человеку, если между вами осталось что-то недосказанное или незавершённое."
+};
+
+
+/* =========================================================
+   СВЕДЕНИЕ ЧИСЛА
+   ========================================================= */
 
 function reduceNumber(number){
 
@@ -410,206 +302,133 @@ function reduceNumber(number){
 
         number = String(number)
             .split("")
-            .reduce(
-                (sum,digit) => sum + Number(digit),
-                0
-            );
+            .reduce((sum,digit) => sum + Number(digit),0);
+
     }
 
     return number;
 }
 
 
+/* =========================================================
+   СУММА ЦИФР
+   ========================================================= */
+
+function sumDigits(value){
+
+    return String(Math.abs(value))
+        .split("")
+        .reduce((sum,digit) => sum + Number(digit),0);
+
+}
+
+
+/* =========================================================
+   ПСИХОМАТРИЦА И ДОПОЛНИТЕЛЬНЫЕ ЧИСЛА
+   ========================================================= */
+
 function calculatePsychomatrix(dateString){
 
-    const parts = dateString.split("-");
+    const cleanDate = dateString.replace(/-/g,"");
 
-    const year = parts[0];
-    const month = parts[1];
-    const day = parts[2];
-
-    const originalDate = day + month + year;
-
-
-    /*
-       ПЕРВОЕ ДОПОЛНИТЕЛЬНОЕ ЧИСЛО
-
-       Сумма всех цифр даты.
-
-       04.07.1988
-       0+4+0+7+1+9+8+8 = 37
-    */
-
-    const A = originalDate
+    const dateDigits = cleanDate
         .split("")
-        .map(Number)
-        .reduce(
-            (sum,n) => sum + n,
-            0
-        );
+        .map(Number);
 
+    /* Первое дополнительное число */
+    const A = dateDigits.reduce(
+        (sum,digit) => sum + digit,
+        0
+    );
 
-    /*
-       ВТОРОЕ ДОПОЛНИТЕЛЬНОЕ ЧИСЛО
+    /* Второе */
+    const B = sumDigits(A);
 
-       Сумма цифр первого числа.
-
-       37 → 3+7 = 10
-    */
-
-    const B = String(A)
-        .split("")
-        .map(Number)
-        .reduce(
-            (sum,n) => sum + n,
-            0
-        );
-
-
-    /*
-       ТРЕТЬЕ ДОПОЛНИТЕЛЬНОЕ ЧИСЛО
-
-       Сведение второго числа.
-
-       10 → 1
-    */
-
+    /* Третье */
     const C = reduceNumber(B);
 
+    /*
+       Первый значимый разряд дня.
+       04 → 4
+       06 → 6
+       24 → 2
+    */
+    const day = Number(cleanDate.substring(6,8));
+
+    const firstMeaningfulDigit =
+        day < 10
+            ? day
+            : Number(String(day).replace(/^0+/,"")[0]);
+
+
+    /* Четвёртое */
+    const D =
+        A - 2 * firstMeaningfulDigit;
+
+
+    /* Пятое */
+    const E = sumDigits(D);
+
 
     /*
-       Находим первую значимую цифру дня.
-
-       04 → 4
-       24 → 2
-       06 → 6
+       Шестое появляется только если пятое
+       состоит более чем из одной цифры.
     */
+    let F = null;
 
-    let firstMeaningfulDigit = 0;
-
-    for(let digit of day.split("")){
-
-        if(Number(digit) !== 0){
-
-            firstMeaningfulDigit = Number(digit);
-
-            break;
-        }
+    if(E > 9){
+        F = reduceNumber(E);
     }
 
 
     /*
-       ЧЕТВЁРТОЕ ДОПОЛНИТЕЛЬНОЕ ЧИСЛО
-
-       Первое число − первая значимая цифра дня × 2.
-
-       04.07.1988:
-
-       37 − 4×2 = 29
-
-       24.06.1987:
-
-       37 − 2×2 = 33
+       В психоматрицу идут цифры даты
+       и дополнительные числа.
     */
-
-    const D = A - (
-        2 * firstMeaningfulDigit
-    );
-
-
-    /*
-       ПЯТОЕ ДОПОЛНИТЕЛЬНОЕ ЧИСЛО
-
-       Сумма цифр четвёртого.
-
-       29 → 2+9 = 11
-       33 → 3+3 = 6
-    */
-
-    const E = String(Math.abs(D))
-        .split("")
-        .map(Number)
-        .reduce(
-            (sum,n) => sum + n,
-            0
-        );
-
-
-    /*
-       ШЕСТОЕ ДОПОЛНИТЕЛЬНОЕ ЧИСЛО
-
-       Сведение пятого.
-
-       11 → 2
-       6 → 6
-    */
-
-    const F = reduceNumber(E);
-
-
-    /*
-       ЦИФРЫ ДЛЯ ПСИХОМАТРИЦЫ
-    */
-
     const allDigits = [
-
-        ...originalDate
-            .split("")
-            .map(Number)
-            .filter(n => n !== 0),
-
-        ...String(A)
-            .split("")
-            .map(Number)
-            .filter(n => n !== 0),
-
-        ...String(B)
-            .split("")
-            .map(Number)
-            .filter(n => n !== 0),
-
-        ...String(C)
-            .split("")
-            .map(Number)
-            .filter(n => n !== 0),
-
-        ...String(Math.abs(D))
-            .split("")
-            .map(Number)
-            .filter(n => n !== 0),
-
-        ...String(E)
-            .split("")
-            .map(Number)
-            .filter(n => n !== 0),
-
-        ...String(F)
-            .split("")
-            .map(Number)
-            .filter(n => n !== 0)
+        ...dateDigits,
+        ...String(A).split("").map(Number),
+        ...String(B).split("").map(Number),
+        ...String(C).split("").map(Number),
+        ...String(Math.abs(D)).split("").map(Number),
+        ...String(E).split("").map(Number)
     ];
 
+    if(F !== null){
+        allDigits.push(
+            ...String(F).split("").map(Number)
+        );
+    }
 
-    const counts = {
 
-        1:0,
-        2:0,
-        3:0,
-        4:0,
-        5:0,
-        6:0,
-        7:0,
-        8:0,
-        9:0
+    /*
+       ВАЖНО:
+       здесь храним НЕ количество цифр,
+       а саму последовательность.
 
+       Например:
+       три единицы → "111"
+       две двойки → "22"
+       одна тройка → "3"
+    */
+    const digits = {
+        1:"",
+        2:"",
+        3:"",
+        4:"",
+        5:"",
+        6:"",
+        7:"",
+        8:"",
+        9:""
     };
 
 
     allDigits.forEach(number => {
 
-        if(counts[number] !== undefined){
+        if(number >= 1 && number <= 9){
 
-            counts[number]++;
+            digits[number] += String(number);
 
         }
 
@@ -617,130 +436,133 @@ function calculatePsychomatrix(dateString){
 
 
     return {
-
-        counts,
-
-        extra:{
-            A,
-            B,
-            C,
-            D,
-            E,
-            F
-        }
-
+        A,
+        B,
+        C,
+        D,
+        E,
+        F,
+        digits
     };
 
 }
 
 
-/* =========================================
-   ТЕКСТЫ ПО ПОКАЗАТЕЛЯМ
-========================================= */
+/* =========================================================
+   ОТРИСОВКА МАТРИЦЫ
+   ========================================================= */
+
+function renderMatrix(digits){
+
+    /*
+       Нужный порядок:
+
+       1 | 4 | 7
+       2 | 5 | 8
+       3 | 6 | 9
+    */
+
+    const numbers = [
+        1,4,7,
+        2,5,8,
+        3,6,9
+    ];
+
+    const matrix = document.getElementById("matrix");
+
+    matrix.innerHTML = "";
 
 
-const ONE = {
+    numbers.forEach(number => {
 
-    "1":
-        "Ты можешь производить впечатление спокойной и достаточно мягкой девушки, но при этом у тебя есть своё мнение. Тебе важно чувствовать, что мужчина относится к тебе с уважением и не пытается тобой управлять.",
+        const cell = document.createElement("div");
 
-    "2":
-        "Ты легко подстраиваешься под человека и можешь долго учитывать его желания. Иногда из-за этого мужчина сначала видит удобство и мягкость, а уже потом замечает твой характер.",
+        cell.className = "cell";
 
-    "3":
-        "Ты заметная в общении и достаточно быстро показываешь характер. С тобой обычно понятно, есть ли интерес: ты не очень умеешь долго изображать безразличие.",
+        /*
+           Показываем сами цифры.
+           111 остаётся 111.
+        */
+        cell.textContent =
+            digits[number] || "";
 
-    "4":
-        "Ты можешь выглядеть очень самостоятельной и человеком, который привык рассчитывать на себя. Мужчине рядом с тобой важно понимать, что он действительно нужен тебе, а не просто присутствует рядом.",
+        matrix.appendChild(cell);
 
-    "5":
-        "У тебя сильная потребность самой принимать решения. Ты можешь спокойно обсуждать отношения, но давление и попытки решить за тебя обычно вызывают сопротивление.",
+    });
 
-    "6":
-        "Ты умеешь заботиться о человеке и много делать для отношений. Но если отдачи мало, со временем появляется раздражение и ощущение, что всё держится на тебе.",
-
-    "7":
-        "Ты не всегда сразу показываешь настоящую реакцию. Мужчина может долго пытаться понять, что ты на самом деле чувствуешь.",
-
-    "8":
-        "Ты достаточно требовательна к отношению к себе. Если мужчина нарушает договорённости или ведёт себя несправедливо, ты это запоминаешь.",
-
-    "9":
-        "Ты много замечаешь и быстро считываешь детали поведения человека. Поэтому красивые слова сами по себе редко способны надолго удерживать твой интерес."
-
-};
+}
 
 
-const TWO = {
+/* =========================================================
+   ДОПОЛНИТЕЛЬНЫЕ ЧИСЛА
+   ========================================================= */
 
-    "1":
-        "В контакте тебе важно чувствовать внимание. Если мужчина проявляется последовательно, ты постепенно становишься теплее.",
+function renderExtra(extra){
 
-    "2":
-        "Ты чувствительна к атмосфере общения. Тон, настроение и отношение мужчины могут влиять на тебя сильнее, чем его конкретные слова.",
+    const container =
+        document.getElementById("extra");
 
-    "3":
-        "Ты хорошо включаешься в живое общение. Тебе интересен мужчина, с которым есть разговор, реакция и ощущение взаимного интереса.",
+    let html = "";
 
-    "4":
-        "Ты можешь сохранять дистанцию, пока не поймёшь, что человеку можно доверять. Поэтому мужчина не всегда сразу понимает твоё отношение.",
+    html += `
+        <div class="extra-row">
+            <span>Первое</span>
+            <span class="extra-number">${extra.A}</span>
+        </div>
+    `;
 
-    "5":
-        "Тебе важно, чтобы общение было понятным. Намёки и игры могут заинтересовать на короткое время, но долго поддерживать интерес тебе сложно.",
+    html += `
+        <div class="extra-row">
+            <span>Второе</span>
+            <span class="extra-number">${extra.B}</span>
+        </div>
+    `;
 
-    "6":
-        "Ты быстро замечаешь, когда человеку нужна поддержка, и можешь сама начинать вкладываться в контакт.",
+    html += `
+        <div class="extra-row">
+            <span>Третье</span>
+            <span class="extra-number">${extra.C}</span>
+        </div>
+    `;
 
-    "7":
-        "Тебе бывает проще наблюдать, чем первой показывать сильную заинтересованность. Поэтому мужчина может недооценить степень твоего интереса.",
+    html += `
+        <div class="extra-row">
+            <span>Четвёртое</span>
+            <span class="extra-number">${extra.D}</span>
+        </div>
+    `;
 
-    "8":
-        "Ты хорошо чувствуешь баланс в отношениях. Если мужчина только получает внимание, но мало даёт взамен, интерес постепенно снижается.",
+    html += `
+        <div class="extra-row">
+            <span>Пятое</span>
+            <span class="extra-number">${extra.E}</span>
+        </div>
+    `;
 
-    "9":
-        "Ты можешь долго помнить отдельные моменты общения. Особенно если мужчина оставил сильное впечатление или задел что-то важное для тебя."
+    /*
+       Шестое выводим только если оно реально существует.
+    */
+    if(extra.F !== null){
 
-};
+        html += `
+            <div class="extra-row">
+                <span>Шестое</span>
+                <span class="extra-number">${extra.F}</span>
+            </div>
+        `;
 
+    }
 
-const THREE = {
+    container.innerHTML = html;
 
-    "1":
-        "Когда тебе действительно нравится мужчина, ты можешь становиться внимательнее к нему, но при этом не всегда хочешь сразу показывать, насколько он тебе важен.",
-
-    "2":
-        "Если мужчина тебе нравится, ты начинаешь сильнее реагировать на его внимание и отсутствие внимания. Поэтому неопределённость может быстро затягивать тебя.",
-
-    "3":
-        "Тебе хочется больше общения, разговоров и совместных впечатлений. Если мужчина отвечает взаимностью, интерес может быстро усиливаться.",
-
-    "4":
-        "Когда мужчина нравится, тебе всё равно важно сохранить контроль над своей жизнью. Ты не обязательно сразу готова перестраивать всё вокруг отношений.",
-
-    "5":
-        "Тебе важно понимать, что происходит между вами. Поэтому при сильном интересе ты можешь много анализировать его поведение.",
-
-    "6":
-        "Когда мужчина нравится, ты можешь начать заботиться о нём ещё до того, как отношения стали по-настоящему близкими.",
-
-    "7":
-        "Ты можешь долго не показывать мужчине всю силу своего интереса. Иногда это создаёт у него ощущение, что он тебе безразличен.",
-
-    "8":
-        "Тебе важно видеть конкретные действия. Если мужчина говорит одно, а делает другое, интерес быстро сталкивается с недоверием.",
-
-    "9":
-        "Ты можешь долго возвращаться мыслями к человеку, если между вами осталось что-то недосказанное или незавершённое."
-
-};
-
-
-/* =========================================
-   ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
-========================================= */
+}
 
 
-function getProfileText(profile, count){
+/* =========================================================
+   ВЫБОР РАСШИФРОВКИ
+   ========================================================= */
+
+function getProfileText(profile,count){
 
     if(count >= 9) return profile["9"];
 
@@ -757,263 +579,101 @@ function getProfileText(profile, count){
 }
 
 
-function renderMatrix(counts){
-
-    const numbers = [1,2,3,4,5,6,7,8,9];
-
-    return numbers.map(number => {
-
-        return `
-            <div class="cell">
-
-                <div class="cell-number">
-                    ${number}
-                </div>
-
-                <div class="cell-count">
-                    ${counts[number]}
-                </div>
-
-            </div>
-        `;
-
-    }).join("");
-
-}
-
-
-function renderExtra(extra){
-
-    let html = "";
-
-    html += `
-        <div class="extra-row">
-            <strong>Первое дополнительное число:</strong>
-            ${extra.A}
-        </div>
-    `;
-
-    html += `
-        <div class="extra-row">
-            <strong>Второе дополнительное число:</strong>
-            ${extra.B}
-        </div>
-    `;
-
-    html += `
-        <div class="extra-row">
-            <strong>Третье дополнительное число:</strong>
-            ${extra.C}
-        </div>
-    `;
-
-    html += `
-        <div class="extra-row">
-            <strong>Четвёртое дополнительное число:</strong>
-            ${extra.D}
-        </div>
-    `;
-
-    html += `
-        <div class="extra-row">
-            <strong>Пятое дополнительное число:</strong>
-            ${extra.E}
-        </div>
-    `;
-
-    html += `
-        <div class="extra-row">
-            <strong>Шестое дополнительное число:</strong>
-            ${extra.F}
-        </div>
-    `;
-
-    return html;
-}
-
-
-/* =========================================
+/* =========================================================
    ОСНОВНОЙ РАСЧЁТ
-========================================= */
-
+   ========================================================= */
 
 function calculate(){
 
-    const dateInput =
-        document.getElementById("birthDate");
+    const birthDate =
+        document.getElementById("birthDate").value;
 
     const error =
         document.getElementById("error");
 
-    const result =
-        document.getElementById("result");
+    error.textContent = "";
 
 
-    if(!dateInput.value){
+    if(!birthDate){
 
-        error.style.display = "block";
-
-        result.style.display = "none";
+        error.textContent =
+            "Введите дату рождения.";
 
         return;
 
     }
 
 
-    error.style.display = "none";
+    const result =
+        calculatePsychomatrix(birthDate);
 
 
-    const data =
-        calculatePsychomatrix(
-            dateInput.value
-        );
+    renderMatrix(result.digits);
 
-
-    const counts =
-        data.counts;
-
-
-    const extra =
-        data.extra;
+    renderExtra(result);
 
 
     /*
-       Показатели
+       Количество единиц/двоек/троек используется
+       только для выбора нужной расшифровки.
+
+       На самой матрице при этом отображается
+       именно 111, 22, 333 и т.д.
     */
 
-    const character =
-        counts[1];
+    const countOnes =
+        result.digits[1].length;
 
-    const energy =
-        counts[2];
+    const countTwos =
+        result.digits[2].length;
 
-    const interest =
-        counts[3];
+    const countThrees =
+        result.digits[3].length;
 
-    const logic =
-        counts[5];
 
-    const family =
-        counts[2] +
-        counts[5] +
-        counts[8];
+    document.getElementById("firstImpression").textContent =
+        getProfileText(ONE,countOnes);
+
+    document.getElementById("attraction").textContent =
+        getProfileText(TWO,countTwos);
+
+    document.getElementById("interestReport").textContent =
+        getProfileText(THREE,countThrees);
 
 
     /*
-       Вывод матрицы
+       Остальные блоки структуры отчёта
+       оставляем на месте.
     */
 
-    document.getElementById("matrix")
-        .innerHTML =
-        renderMatrix(counts);
+    document.getElementById("whenLike").textContent =
+        getProfileText(THREE,countThrees);
+
+    document.getElementById("closeness").textContent =
+        getProfileText(TWO,countTwos);
+
+    document.getElementById("relationships").textContent =
+        getProfileText(ONE,countOnes);
 
 
-    /*
-       Вывод дополнительных чисел
-    */
-
-    document.getElementById("extra")
-        .innerHTML =
-        renderExtra(extra);
+    document.getElementById("result")
+        .classList.remove("hidden");
 
 
-    /*
-       Вывод показателей
-    */
-
-    document.getElementById("character")
-        .textContent =
-        character;
-
-    document.getElementById("energy")
-        .textContent =
-        energy;
-
-    document.getElementById("interest")
-        .textContent =
-        interest;
-
-    document.getElementById("logic")
-        .textContent =
-        logic;
-
-    document.getElementById("family")
-        .textContent =
-        family;
-
-
-    /*
-       Текстовая часть
-    */
-
-    document.getElementById("firstImpression")
-        .textContent =
-        getProfileText(
-            ONE,
-            character
-        );
-
-
-    document.getElementById("attraction")
-        .textContent =
-        getProfileText(
-            TWO,
-            energy
-        );
-
-
-    document.getElementById("interestReport")
-        .textContent =
-        getProfileText(
-            THREE,
-            interest
-        );
-
-
-    document.getElementById("whenLike")
-        .textContent =
-        getProfileText(
-            THREE,
-            interest
-        );
-
-
-    document.getElementById("closeness")
-        .textContent =
-        getProfileText(
-            TWO,
-            energy
-        );
-
-
-    document.getElementById("relationships")
-        .textContent =
-        getProfileText(
-            ONE,
-            character
-        );
-
-
-    /*
-       Показываем результат
-    */
-
-    result.style.display = "block";
-
-
-    result.scrollIntoView({
-        behavior:"smooth"
-    });
+    document.getElementById("result")
+        .scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+        });
 
 }
 
 
-/* =========================================
+/* =========================================================
    КОПИРОВАНИЕ
-========================================= */
+   ========================================================= */
 
-
-function copyResult(){
+function copyReport(){
 
     const result =
         document.getElementById("result");
@@ -1021,25 +681,19 @@ function copyResult(){
     const text =
         result.innerText;
 
-
     navigator.clipboard.writeText(text)
         .then(() => {
 
-            alert(
-                "Разбор скопирован."
-            );
+            alert("Разбор скопирован.");
 
         })
         .catch(() => {
 
-            alert(
-                "Не удалось скопировать результат."
-            );
+            alert("Не удалось скопировать текст.");
 
         });
 
 }
-
 
 </script>
 
