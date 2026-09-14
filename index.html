@@ -190,11 +190,10 @@ input:disabled {
 
     <h1>Формула притяжения</h1>
 
-    <div id="accessMessage" class="access-message">
-      Проверяем доступ...
+    <div id="accessMessage" class="access-message hidden">
     </div>
 
-    <div id="calculatorForm" class="hidden">
+    <div id="calculatorForm">
 
       <label for="birthDate">
         Введите дату рождения
@@ -258,215 +257,6 @@ input:disabled {
 
 
 <script>
-
-/* =========================
-   ДОСТУП
-========================= */
-
-const ACCESS_API =
-  'https://script.google.com/macros/s/AKfycbw3Na2K39_Eye69f_PY3-8Z6N0P9ZBoqX7p-tFc9cPYBVhWA3ta_0Mdf1VCSrObkLla/exec';
-
-const accessToken =
-  new URLSearchParams(window.location.search).get('access') || '';
-
-let accessGranted = false;
-let savedBirthDate = '';
-
-
-function showAccessError(message) {
-
-  const element =
-    document.getElementById('accessMessage');
-
-  element.classList.add('access-error');
-
-  element.innerHTML = message;
-
-}
-
-
-function showCalculator() {
-
-  document
-    .getElementById('accessMessage')
-    .classList
-    .add('hidden');
-
-  document
-    .getElementById('calculatorForm')
-    .classList
-    .remove('hidden');
-
-  accessGranted = true;
-
-}
-
-
-/* =========================
-   JSONP
-========================= */
-
-function jsonp(url, callback) {
-
-  const callbackName =
-    'formulaCallback_' +
-    Date.now() +
-    '_' +
-    Math.floor(Math.random() * 100000);
-
-  const script =
-    document.createElement('script');
-
-  let finished = false;
-
-  window[callbackName] = function(data) {
-
-    if (finished) {
-      return;
-    }
-
-    finished = true;
-
-    try {
-      callback(data);
-    } finally {
-
-      delete window[callbackName];
-
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
-
-    }
-
-  };
-
-  script.src =
-    url +
-    '&callback=' +
-    encodeURIComponent(callbackName);
-
-  script.onerror = function() {
-
-    if (finished) {
-      return;
-    }
-
-    finished = true;
-
-    delete window[callbackName];
-
-    if (script.parentNode) {
-      script.parentNode.removeChild(script);
-    }
-
-    showAccessError(
-      'Не удалось проверить доступ. Попробуйте открыть ссылку ещё раз.'
-    );
-
-  };
-
-  document.head.appendChild(script);
-
-}
-
-
-/* =========================
-   ПРОВЕРКА ДОСТУПА
-========================= */
-
-function checkAccess() {
-
-  if (!accessToken) {
-
-    showAccessError(
-      'Доступ к «Формуле притяжения» открывается по персональной ссылке после оплаты.'
-    );
-
-    return;
-  }
-
-  jsonp(
-    ACCESS_API +
-    '?action=check&token=' +
-    encodeURIComponent(accessToken),
-
-    function(data) {
-
-      if (!data || !data.ok) {
-
-        showAccessError(
-          'Доступ не найден. Откройте персональную ссылку из письма после оплаты.'
-        );
-
-        return;
-      }
-
-      if (
-        data.used &&
-        data.birthDate
-      ) {
-
-        savedBirthDate =
-          data.birthDate;
-
-        showCalculator();
-
-        document
-          .getElementById('birthDate')
-          .value =
-          savedBirthDate;
-
-        return;
-      }
-
-      showCalculator();
-
-    }
-  );
-
-}
-
-
-/* =========================
-   ПРИВЯЗКА ДАТЫ
-========================= */
-
-function bindDateAndCalculate(date) {
-
-  jsonp(
-    ACCESS_API +
-    '?action=bind' +
-    '&token=' +
-    encodeURIComponent(accessToken) +
-    '&date=' +
-    encodeURIComponent(date),
-
-    function(data) {
-
-      if (!data || !data.ok) {
-
-        alert(
-          data && data.error
-            ? data.error
-            : 'Не удалось подтвердить дату.'
-        );
-
-        return;
-
-      }
-
-      savedBirthDate =
-        data.birthDate || date;
-
-      renderCalculation(
-        savedBirthDate
-      );
-
-    }
-  );
-
-}
 
 
 /* =========================
@@ -1507,16 +1297,6 @@ function renderCalculation(date) {
 
 function calculate() {
 
-  if (!accessGranted) {
-
-    alert(
-      'Нет доступа к калькулятору.'
-    );
-
-    return;
-
-  }
-
   const input =
     document.getElementById('birthDate');
 
@@ -1540,11 +1320,11 @@ function calculate() {
 
   button.disabled = true;
 
-  bindDateAndCalculate(date);
+  renderCalculation(date);
 
   setTimeout(() => {
     button.disabled = false;
-  }, 3000);
+  }, 500);
 
 }
 
@@ -1588,13 +1368,23 @@ function copyResult() {
 
 
 /* =========================
-   ПРОВЕРКА ДОСТУПА ПРИ ОТКРЫТИИ
+   ГОТОВНОСТЬ
 ========================= */
 
 document.addEventListener(
   'DOMContentLoaded',
   function() {
-    checkAccess();
+
+    document
+      .getElementById('accessMessage')
+      .classList
+      .add('hidden');
+
+    document
+      .getElementById('calculatorForm')
+      .classList
+      .remove('hidden');
+
   }
 );
 
