@@ -484,15 +484,16 @@ function calculatePsychomatrix(dateString){
     const F = E > 9 ? reduceNumber(E) : E;
 
 
-    const matrixSource =
-        digitsOnly +
-        String(A) +
-        String(B) +
-        String(C) +
-        String(D) +
-        String(E) +
-        String(F);
+    let matrixSource = 
+    digitsOnly + 
+    String(A) + 
+    String(B) + 
+    String(C) + 
+    String(D) + 
+    String(E);
 
+if(E > 9){
+    matrixSource += String(F);
 
     const digits = {
         1:"",
@@ -518,9 +519,15 @@ function calculatePsychomatrix(dateString){
     }
 
 
-    return {
-        digits,
-        extra:[A,B,C,D,E,F]
+    const extra = [A, B, C, D, E];
+
+if(E > 9){
+    extra.push(F);
+}
+
+return { 
+    digits, 
+    extra
     };
 }
 
