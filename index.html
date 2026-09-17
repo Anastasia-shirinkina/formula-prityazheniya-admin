@@ -456,8 +456,6 @@ function calculatePsychomatrix(dateString){
         .split("")
         .reduce((sum,n)=>sum+Number(n),0);
 
-    const C = reduceNumber(B);
-
 
     const day = Number(dateString.split("-")[2]);
 
@@ -475,25 +473,28 @@ function calculatePsychomatrix(dateString){
     }
 
 
-    const D = A - (2 * firstMeaningfulDigit);
+    const C = A - (2 * firstMeaningfulDigit);
 
-    const E = String(Math.abs(D))
+    const D = String(Math.abs(C))
         .split("")
         .reduce((sum,n)=>sum+Number(n),0);
-
-    const F = E > 9 ? reduceNumber(E) : null;
 
 
     let matrixSource =
         digitsOnly +
         String(A) +
-        String(B) +
-        String(C) +
-        String(D) +
-        String(E);
+        String(B);
 
-    if(E > 9){
-        matrixSource += String(F);
+    if(B > 9){
+        matrixSource += String(reduceNumber(B));
+    }
+
+    matrixSource +=
+        String(C) +
+        String(D);
+
+    if(D > 9){
+        matrixSource += String(reduceNumber(D));
     }
 
 
@@ -521,10 +522,20 @@ function calculatePsychomatrix(dateString){
     }
 
 
-    const extra = [A, B, C, D, E];
+    const extra = [
+        A,
+        B
+    ];
 
-    if(E > 9){
-        extra.push(F);
+    if(B > 9){
+        extra.push(reduceNumber(B));
+    }
+
+    extra.push(C);
+    extra.push(D);
+
+    if(D > 9){
+        extra.push(reduceNumber(D));
     }
 
 
